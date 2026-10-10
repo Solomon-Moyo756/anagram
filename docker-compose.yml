@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:15
     container_name: anagram-postgres
     environment:
       POSTGRES_DB: anagramdb
@@ -10,3 +10,5 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:

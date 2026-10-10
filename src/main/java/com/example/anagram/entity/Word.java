@@ -1,7 +1,6 @@
 package com.example.anagram.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "words")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Word {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String word;
 }
