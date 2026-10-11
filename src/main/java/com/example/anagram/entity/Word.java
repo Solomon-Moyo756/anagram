@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class Word {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "words_seq")
+    @SequenceGenerator(name = "words_seq", sequenceName = "words_seq", allocationSize = 50)
     private Long id;
 
     private String value;
