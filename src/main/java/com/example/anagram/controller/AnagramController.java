@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for CRUD operations on anagram system.
  *
  * @author Solomon Moyo
- **/
+ */
 @RestController
 @RequestMapping("api/")
 public class AnagramController {
