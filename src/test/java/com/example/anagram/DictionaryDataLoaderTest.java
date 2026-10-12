@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -58,5 +59,93 @@ class DictionaryDataLoaderTest {
     void testSortString() {
         String result = dataLoader.sortString("banana");
         assertEquals("aaabnn", result);
+    }
+
+    @Test
+    void testAddWordToAnagramMap() {
+        dataLoader.addWordToAnagramMap("listen");
+        dataLoader.addWordToAnagramMap("silent");
+
+        String key = dataLoader.sortString("listen");
+        List<String> group = dataLoader.getAnagramsMap().get(key);
+
+        assertEquals(2, group.size());
+        assertTrue(group.contains("listen"));
+        assertTrue(group.contains("silent"));
+    }
+
+    @Test
+    void testRemoveWordFromAnagramMap() {
+        dataLoader.addWordToAnagramMap("listen");
+        dataLoader.addWordToAnagramMap("silent");
+
+        dataLoader.removeWordFromAnagramMap("silent");
+
+        String key = dataLoader.sortString("listen");
+        List<String> group = dataLoader.getAnagramsMap().get(key);
+
+        assertEquals(1, group.size());
+        assertTrue(group.contains("listen"));
+        assertFalse(group.contains("silent"));
+    }
+
+    @Test
+    void testGetLengthToAnagramsStats() {
+        dataLoader.addWordToAnagramMap("listen");
+        dataLoader.addWordToAnagramMap("silent");
+        dataLoader.addWordToAnagramMap("enlist");
+
+        Map<Integer, Integer> stats = dataLoader.getLengthToAnagramsStats();
+
+        // length 6 words: 3 words, so 2 anagrams per word group
+        assertTrue(stats.containsKey(6));
+        assertEquals(2, stats.get(6));
+    }
+
+    @Test
+    void testGetAnagramsForWord() {
+        dataLoader.addWordToAnagramMap("listen");
+        dataLoader.addWordToAnagramMap("silent");
+        dataLoader.addWordToAnagramMap("enlist");
+
+        List<String> anagrams = dataLoader.getAnagramsForWord("listen");
+
+        assertEquals(2, anagrams.size());
+        assertTrue(anagrams.contains("silent"));
+        assertTrue(anagrams.contains("enlist"));
+        assertFalse(anagrams.contains("listen")); // original word excluded
+    }
+
+    @Test
+    void testRemoveWordAndGetItsAnagram() {
+        dataLoader.addWordToAnagramMap("listen");
+        dataLoader.addWordToAnagramMap("silent");
+        dataLoader.addWordToAnagramMap("enlist");
+
+        dataLoader.removeWordFromAnagramMap("silent");
+
+        List<String> anagrams = dataLoader.getAnagramsForWord("listen");
+
+        assertEquals(1, anagrams.size());
+        assertFalse(anagrams.contains("silent"));
+        assertTrue(anagrams.contains("enlist"));
+        assertFalse(anagrams.contains("listen"));
+    }
+
+    @Test
+    void testAddWordAndGetItsAnagram() {
+        dataLoader.addWordToAnagramMap("listen");
+        dataLoader.addWordToAnagramMap("silent");
+        dataLoader.addWordToAnagramMap("enlist");
+
+        dataLoader.addWordToAnagramMap("selint");
+
+        List<String> anagrams = dataLoader.getAnagramsForWord("listen");
+
+        assertEquals(3, anagrams.size());
+        assertTrue(anagrams.contains("silent"));
+        assertTrue(anagrams.contains("enlist"));
+        assertTrue(anagrams.contains("selint"));
+        assertFalse(anagrams.contains("listen"));
     }
 }

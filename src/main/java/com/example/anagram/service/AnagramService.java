@@ -38,6 +38,7 @@ public class AnagramService {
         newWord.setValue(value);
         wordRepository.save(newWord);
         //update hash map
+        log.info("word: {} successfully added",value);
         dictionaryDataLoader.addWordToAnagramMap(value);
     }
 

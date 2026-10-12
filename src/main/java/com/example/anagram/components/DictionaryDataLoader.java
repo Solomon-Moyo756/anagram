@@ -29,6 +29,7 @@ public class DictionaryDataLoader {
     public void seedDatabase() {
         try {
             if (wordRepository.count() == 0) {
+                log.info("seeding database with new data");
                 FileInputStream inputStream = new FileInputStream(DICT_PATH);
                 Scanner scanner = new Scanner(inputStream);
                 List<Word> words = new ArrayList<>();
@@ -93,6 +94,7 @@ public class DictionaryDataLoader {
      * */
     public HashMap<Integer, Integer> getLengthToAnagramsStats() {
         //looping through key set and check the size, after that add (size of list - 1) of that key,
+        log.info("generating stats for all anagrams of all lengths");
         HashMap<Integer, Integer> statsMap = new HashMap<>();
         for (String key : anagramsMap.keySet()) {
             int keySize = key.length();
@@ -110,6 +112,7 @@ public class DictionaryDataLoader {
     }
 
     public List<String> getAnagramsForWord(String value) {
+        log.info("computing anagrams for word: {}", value);
         String anagramKey = sortString(value);
         if (anagramsMap.containsKey(anagramKey)) {
             List<String> anagramsToReturn = anagramsMap.get(anagramKey);
