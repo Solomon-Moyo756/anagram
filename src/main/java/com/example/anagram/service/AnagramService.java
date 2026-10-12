@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -36,6 +37,8 @@ public class AnagramService {
         Word newWord = new Word();
         newWord.setValue(value);
         wordRepository.save(newWord);
+        //update hash map
+        dictionaryDataLoader.addWordToAnagramMap(value);
     }
 
     public void deleteWord(String value) {
@@ -45,10 +48,16 @@ public class AnagramService {
             return;
         }
         wordRepository.delete(wordToDElete.get());
+        //remove from in memery anagram hash map
+        dictionaryDataLoader.removeWordFromAnagramMap(value);
         log.info("word {} was successfully deleted.", wordToDElete.get().getValue());
     }
 
     public List<WordDto> getAnagramsForWord(String value) {
         return dictionaryDataLoader.getAnagramsForWord(value).stream().map(WordDto::new).toList();
+    }
+
+    public Map<Integer,Integer> getLengthToAnagramsStats(){
+        return dictionaryDataLoader.getLengthToAnagramsStats();
     }
 }

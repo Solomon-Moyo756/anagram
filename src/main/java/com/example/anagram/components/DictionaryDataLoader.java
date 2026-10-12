@@ -67,7 +67,7 @@ public class DictionaryDataLoader {
         log.info("hash map for anagrams has been successfully created");
     }
 
-    public void updateAnagramMap(String newWord) {
+    public void addWordToAnagramMap(String newWord) {
         //including a new word to the anagrams hash map
         String anagramKey = sortString(newWord);
         if (anagramsMap.containsKey(anagramKey)) {
@@ -77,6 +77,36 @@ public class DictionaryDataLoader {
             listOfWords.add(newWord.toLowerCase());
             anagramsMap.put(anagramKey, listOfWords);
         }
+    }
+
+    public void removeWordFromAnagramMap(String wordToRemove) {
+        //including a new word to the anagrams hash map
+        String anagramKey = sortString(wordToRemove);
+        if (anagramsMap.containsKey(anagramKey)) {
+            anagramsMap.get(anagramKey).remove(wordToRemove.toLowerCase());
+            log.info("word {} removed from anagrams map", wordToRemove);
+        }
+    }
+
+    /*
+     * defines how correlation between length of word and number of anagrams
+     * */
+    public HashMap<Integer, Integer> getLengthToAnagramsStats() {
+        //looping through key set and check the size, after that add (size of list - 1) of that key,
+        HashMap<Integer, Integer> statsMap = new HashMap<>();
+        for (String key : anagramsMap.keySet()) {
+            int keySize = key.length();
+            if (statsMap.containsKey(keySize)) {
+                int numberOfAnagrams = statsMap.get(keySize);
+                numberOfAnagrams += anagramsMap.get(key).size() - 1; //subtracting 'one' because a word cannot be its own anagram
+                statsMap.put(keySize, numberOfAnagrams);
+            } else {
+                int newNumberOfAnagrams = anagramsMap.get(key).size() - 1;
+                statsMap.put(keySize, newNumberOfAnagrams);
+            }
+        }
+        log.info("generating stats complete");
+        return statsMap;
     }
 
     public List<String> getAnagramsForWord(String value) {
