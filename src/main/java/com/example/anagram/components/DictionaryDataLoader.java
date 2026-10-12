@@ -19,7 +19,7 @@ public class DictionaryDataLoader {
     private final WordRepository wordRepository;
     private String DICT_PATH = "src/main/resources/dict/Dictionary.txt";
     @Getter
-    private HashMap<String, List<String>> anagramsMap = new HashMap<>();
+    private HashMap<String, ArrayList<String>> anagramsMap = new HashMap<>();
 
     public DictionaryDataLoader(WordRepository wordRepository) {
         this.wordRepository = wordRepository;
@@ -53,13 +53,13 @@ public class DictionaryDataLoader {
     public void initializeAnagramMap() {
         List<Word> words = wordRepository.findAll();
         for (Word word : words) {
-            String value = word.getValue();
+            String value = word.getValue().toLowerCase();
             String orderedWord = sortString(value);
             if (anagramsMap.containsKey(orderedWord)) {
                 anagramsMap.get(orderedWord).add(value);
             } else {
                 //adding a new key value pair
-                List<String> listOfWords = new ArrayList<>();
+                ArrayList<String> listOfWords = new ArrayList<>();
                 listOfWords.add(value);
                 anagramsMap.put(orderedWord, listOfWords);
             }
@@ -67,8 +67,30 @@ public class DictionaryDataLoader {
         log.info("hash map for anagrams has been successfully created");
     }
 
+    public void updateAnagramMap(String newWord) {
+        //including a new word to the anagrams hash map
+        String anagramKey = sortString(newWord);
+        if (anagramsMap.containsKey(anagramKey)) {
+            anagramsMap.get(anagramKey).add(newWord.toLowerCase());
+        } else {
+            ArrayList<String> listOfWords = new ArrayList<>();
+            listOfWords.add(newWord.toLowerCase());
+            anagramsMap.put(anagramKey, listOfWords);
+        }
+    }
+
+    public List<String> getAnagramsForWord(String value) {
+        String anagramKey = sortString(value);
+        if (anagramsMap.containsKey(anagramKey)) {
+            List<String> anagramsToReturn = anagramsMap.get(anagramKey);
+            anagramsToReturn.remove(value.toLowerCase()); //removing value since not part of its own anagram
+            return anagramsToReturn;
+        }
+        return Collections.emptyList();
+    }
+
     public String sortString(String input) {
-        char[] chars = input.toCharArray();
+        char[] chars = input.toLowerCase().toCharArray();
         Arrays.sort(chars);
         return new String(chars);
     }
