@@ -2,7 +2,6 @@ package com.example.anagram.components;
 
 import com.example.anagram.entity.Word;
 import com.example.anagram.repository.WordRepository;
-import com.example.anagram.service.AnagramService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

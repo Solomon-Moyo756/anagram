@@ -1,9 +1,13 @@
 package com.example.anagram.controller;
 
+import com.example.anagram.dto.WordDto;
+import com.example.anagram.service.AnagramService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Controller for CRUD operations on anagram system.
@@ -13,10 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/")
 public class AnagramController {
+    private final AnagramService anagramService;
 
-    @GetMapping("name")
-    public ResponseEntity<String> getName() {
-        return ResponseEntity.ok("Solomon");
+    public AnagramController(AnagramService anagramService) {
+        this.anagramService = anagramService;
     }
 
+    @GetMapping("words")
+    public ResponseEntity<List<WordDto>> getAllWords() {
+        List<WordDto> words = anagramService.getAllWords();
+
+        return ResponseEntity.ok(words);
+    }
 }
