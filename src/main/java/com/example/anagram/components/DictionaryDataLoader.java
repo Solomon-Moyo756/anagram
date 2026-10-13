@@ -133,7 +133,7 @@ public class DictionaryDataLoader {
         log.info("computing anagrams for word: {}", value);
         String anagramKey = sortString(value);
         if (anagramsMap.containsKey(anagramKey)) {
-            List<String> anagramsToReturn = anagramsMap.get(anagramKey);
+            List<String> anagramsToReturn = new ArrayList<>(anagramsMap.get(anagramKey));
             anagramsToReturn.remove(normalize(value)); //removing value since not part of its own anagram
             return anagramsToReturn;
         }
