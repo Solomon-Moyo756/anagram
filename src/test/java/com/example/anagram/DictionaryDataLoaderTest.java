@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.anagram.components.DictionaryDataLoader.normalize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,17 +49,17 @@ class DictionaryDataLoaderTest {
 
         assertNotNull(anagrams);
         assertEquals(3, anagrams.size());
-        assertTrue(anagrams.contains("listen"));
-        assertTrue(anagrams.contains("silent"));
-        assertTrue(anagrams.contains("enlist"));
-        assertFalse(anagrams.contains("why"));
+        assertTrue(anagrams.contains(normalize("listen")));
+        assertTrue(anagrams.contains(normalize("silent")));
+        assertTrue(anagrams.contains(normalize("enlist")));
+        assertFalse(anagrams.contains(normalize("why")));
 
     }
 
     @Test
     void testSortString() {
         String result = dataLoader.sortString("banana");
-        assertEquals("aaabnn", result);
+        assertEquals(normalize("aaabnn"), result);
     }
 
     @Test
@@ -70,8 +71,8 @@ class DictionaryDataLoaderTest {
         List<String> group = dataLoader.getAnagramsMap().get(key);
 
         assertEquals(2, group.size());
-        assertTrue(group.contains("listen"));
-        assertTrue(group.contains("silent"));
+        assertTrue(group.contains(normalize("listen")));
+        assertTrue(group.contains(normalize("silent")));
     }
 
     @Test
@@ -86,15 +87,15 @@ class DictionaryDataLoaderTest {
         List<String> group = dataLoader.getAnagramsMap().get(key);
 
         assertEquals(1, group.size());
-        assertTrue(group.contains("listen"));
-        assertFalse(group.contains("silent"));
+        assertTrue(group.contains(normalize("listen")));
+        assertFalse(group.contains(normalize("silent")));
     }
 
     @Test
     void testGetLengthToAnagramsStats() {
-        dataLoader.addWordToAnagramMap("listen");
-        dataLoader.addWordToAnagramMap("silent");
-        dataLoader.addWordToAnagramMap("enlist");
+        dataLoader.addWordToAnagramMap(normalize("listen"));
+        dataLoader.addWordToAnagramMap(normalize("silent"));
+        dataLoader.addWordToAnagramMap(normalize("enlist"));
 
         Map<Integer, Integer> stats = dataLoader.getLengthToAnagramsStats();
 
@@ -112,9 +113,9 @@ class DictionaryDataLoaderTest {
         List<String> anagrams = dataLoader.getAnagramsForWord("listen");
 
         assertEquals(2, anagrams.size());
-        assertTrue(anagrams.contains("silent"));
-        assertTrue(anagrams.contains("enlist"));
-        assertFalse(anagrams.contains("listen")); // original word excluded
+        assertTrue(anagrams.contains(normalize("silent")));
+        assertTrue(anagrams.contains(normalize("enlist")));
+        assertFalse(anagrams.contains(normalize("listen"))); // original word excluded
     }
 
     @Test
@@ -129,9 +130,9 @@ class DictionaryDataLoaderTest {
         List<String> anagrams = dataLoader.getAnagramsForWord("listen");
 
         assertEquals(1, anagrams.size());
-        assertFalse(anagrams.contains("silent"));
-        assertTrue(anagrams.contains("enlist"));
-        assertFalse(anagrams.contains("listen"));
+        assertFalse(anagrams.contains(normalize("silent")));
+        assertTrue(anagrams.contains(normalize("enlist")));
+        assertFalse(anagrams.contains(normalize("listen")));
     }
 
     @Test
@@ -145,9 +146,9 @@ class DictionaryDataLoaderTest {
         List<String> anagrams = dataLoader.getAnagramsForWord("listen");
 
         assertEquals(3, anagrams.size());
-        assertTrue(anagrams.contains("silent"));
-        assertTrue(anagrams.contains("enlist"));
-        assertTrue(anagrams.contains("selint"));
-        assertFalse(anagrams.contains("listen"));
+        assertTrue(anagrams.contains(normalize("silent")));
+        assertTrue(anagrams.contains(normalize("enlist")));
+        assertTrue(anagrams.contains(normalize("selint")));
+        assertFalse(anagrams.contains(normalize("listen")));
     }
 }

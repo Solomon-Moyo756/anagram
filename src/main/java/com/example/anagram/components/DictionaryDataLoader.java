@@ -81,13 +81,14 @@ public class DictionaryDataLoader {
     }
 
     public void addWordToAnagramMap(String newWord) {
+        newWord = normalize(newWord);
         //including a new word to the anagrams hash map
         String anagramKey = sortString(newWord);
         if (anagramsMap.containsKey(anagramKey)) {
-            anagramsMap.get(anagramKey).add(normalize(newWord));
+            anagramsMap.get(anagramKey).add(newWord);
         } else {
             ArrayList<String> listOfWords = new ArrayList<>();
-            listOfWords.add(normalize(newWord));
+            listOfWords.add(newWord);
             anagramsMap.put(anagramKey, listOfWords);
         }
     }
