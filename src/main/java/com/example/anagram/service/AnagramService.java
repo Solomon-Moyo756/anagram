@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.anagram.components.DictionaryDataLoader.normalize;
+
 /**
  * Service for handling most business logic for the CRUD operations on anagram system.
  *
@@ -33,6 +35,7 @@ public class AnagramService {
     }
 
     public Boolean addWord(String value) {
+        value = normalize(value);
         List<Word> currentWord = wordRepository.findByValue(value);
         if (!currentWord.isEmpty()) {
             log.info("word: {} failed to be added, it might exist", value);
@@ -48,6 +51,7 @@ public class AnagramService {
     }
 
     public Boolean deleteWord(String value) {
+        value = normalize(value);
         List<Word> wordToDElete = wordRepository.findByValue(value);
         if (wordToDElete.isEmpty()) {
             log.error("failed to delete word because word: {} was not found", value);
@@ -55,7 +59,7 @@ public class AnagramService {
         }
         wordRepository.deleteAll(wordToDElete);
         //remove from in memery anagram hash map
-        dictionaryDataLoader.removeWordFromAnagramMap(value);
+        dictionaryDataLoader.removeWordFromAnagramMap(wordToDElete);
         log.info("word {} was successfully deleted.", wordToDElete.get(0).getValue());
         return true;
     }

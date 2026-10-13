@@ -44,7 +44,7 @@ public class DictionaryDataLoader {
                 List<Word> words = new ArrayList<>();
                 while (scanner.hasNext()) {
                     Word word = new Word();
-                    String value = scanner.nextLine();
+                    String value = normalize(scanner.nextLine());
                     word.setValue(value);
                     words.add(word);
                 }
@@ -66,7 +66,7 @@ public class DictionaryDataLoader {
     public void initializeAnagramMap() {
         List<Word> words = wordRepository.findAll();
         for (Word word : words) {
-            String value = word.getValue().toLowerCase();
+            String value = normalize(word.getValue());
             String orderedWord = sortString(value);
             if (anagramsMap.containsKey(orderedWord)) {
                 anagramsMap.get(orderedWord).add(value);
@@ -84,20 +84,22 @@ public class DictionaryDataLoader {
         //including a new word to the anagrams hash map
         String anagramKey = sortString(newWord);
         if (anagramsMap.containsKey(anagramKey)) {
-            anagramsMap.get(anagramKey).add(newWord.toLowerCase());
+            anagramsMap.get(anagramKey).add(normalize(newWord));
         } else {
             ArrayList<String> listOfWords = new ArrayList<>();
-            listOfWords.add(newWord.toLowerCase());
+            listOfWords.add(normalize(newWord));
             anagramsMap.put(anagramKey, listOfWords);
         }
     }
 
-    public void removeWordFromAnagramMap(String wordToRemove) {
-        //including a new word to the anagrams hash map
-        String anagramKey = sortString(wordToRemove);
-        if (anagramsMap.containsKey(anagramKey)) {
-            anagramsMap.get(anagramKey).remove(wordToRemove.toLowerCase());
-            log.info("word {} removed from anagrams map", wordToRemove);
+    public void removeWordFromAnagramMap(List<Word> wordsToRemove) {
+        //removing word to the anagrams hash map
+        for (Word word : wordsToRemove) {
+            String anagramKey = sortString(word.getValue());
+            if (anagramsMap.containsKey(anagramKey)) {
+                anagramsMap.get(anagramKey).remove(normalize(word.getValue()));
+                log.info("word {} removed from anagrams map", word.getValue());
+            }
         }
     }
 
@@ -131,16 +133,20 @@ public class DictionaryDataLoader {
         String anagramKey = sortString(value);
         if (anagramsMap.containsKey(anagramKey)) {
             List<String> anagramsToReturn = anagramsMap.get(anagramKey);
-            anagramsToReturn.remove(value.toLowerCase()); //removing value since not part of its own anagram
+            anagramsToReturn.remove(normalize(value)); //removing value since not part of its own anagram
             return anagramsToReturn;
         }
         return Collections.emptyList();
     }
 
     public String sortString(String input) {
-        char[] chars = input.toLowerCase().toCharArray();
+        char[] chars = normalize(input).toCharArray();
         Arrays.sort(chars);
         return new String(chars);
+    }
+
+    public static String normalize(String str){
+        return str.toUpperCase();
     }
 
 }

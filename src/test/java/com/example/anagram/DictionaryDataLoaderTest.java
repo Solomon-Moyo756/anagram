@@ -78,8 +78,9 @@ class DictionaryDataLoaderTest {
     void testRemoveWordFromAnagramMap() {
         dataLoader.addWordToAnagramMap("listen");
         dataLoader.addWordToAnagramMap("silent");
-
-        dataLoader.removeWordFromAnagramMap("silent");
+        Word word = new Word();
+        word.setValue("silent");
+        dataLoader.removeWordFromAnagramMap(List.of(word));
 
         String key = dataLoader.sortString("listen");
         List<String> group = dataLoader.getAnagramsMap().get(key);
@@ -121,8 +122,9 @@ class DictionaryDataLoaderTest {
         dataLoader.addWordToAnagramMap("listen");
         dataLoader.addWordToAnagramMap("silent");
         dataLoader.addWordToAnagramMap("enlist");
-
-        dataLoader.removeWordFromAnagramMap("silent");
+        Word word = new Word();
+        word.setValue("silent");
+        dataLoader.removeWordFromAnagramMap(List.of(word));
 
         List<String> anagrams = dataLoader.getAnagramsForWord("listen");
 
