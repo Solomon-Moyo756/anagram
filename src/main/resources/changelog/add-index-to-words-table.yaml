@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: index-value-on-words-table
+      author: solomon
+      changes:
+        - createIndex:
+            indexName: idx_word_value
+            tableName: words
+            columns:
+              - column:
+                  name: value

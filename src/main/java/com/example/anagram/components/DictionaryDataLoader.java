@@ -12,6 +12,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+/**
+ * This Component is the one that does the main work of identifying anagrams, intializing and keeping them in mmemory.
+ *
+ * @author Solomon
+ */
 @Component
 @Slf4j
 public class DictionaryDataLoader {
@@ -25,6 +30,10 @@ public class DictionaryDataLoader {
         this.wordRepository = wordRepository;
     }
 
+    /**
+     * Seeding the databse so we can use it as source of truth
+     *
+     */
     @EventListener(ApplicationReadyEvent.class)
     public void seedDatabase() {
         try {
@@ -51,6 +60,9 @@ public class DictionaryDataLoader {
         }
     }
 
+    /**
+     * Initializing the in memory anagram map, which is used to store the anagrams relationship
+     */
     public void initializeAnagramMap() {
         List<Word> words = wordRepository.findAll();
         for (Word word : words) {
@@ -89,9 +101,9 @@ public class DictionaryDataLoader {
         }
     }
 
-    /*
+    /**
      * defines how correlation between length of word and number of anagrams
-     * */
+     */
     public HashMap<Integer, Integer> getLengthToAnagramsStats() {
         //looping through key set and check the size, after that add (size of list - 1) of that key,
         log.info("generating stats for all anagrams of all lengths");
@@ -111,6 +123,9 @@ public class DictionaryDataLoader {
         return statsMap;
     }
 
+    /**
+     * determines the anagrams for a specific word, while making sure that itself is not counted as its own anagram
+     */
     public List<String> getAnagramsForWord(String value) {
         log.info("computing anagrams for word: {}", value);
         String anagramKey = sortString(value);

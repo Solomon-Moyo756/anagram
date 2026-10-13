@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Service for handling most business logic for the CRUD operations on anagram system.
@@ -33,32 +32,39 @@ public class AnagramService {
         return wordRepository.findAll().stream().map(word -> new WordDto(word.getValue())).toList();
     }
 
-    public void addWord(String value) {
+    public Boolean addWord(String value) {
+        List<Word> currentWord = wordRepository.findByValue(value);
+        if (!currentWord.isEmpty()) {
+            log.info("word: {} failed to be added, it might exist", value);
+            return false;
+        }
         Word newWord = new Word();
         newWord.setValue(value);
         wordRepository.save(newWord);
         //update hash map
-        log.info("word: {} successfully added",value);
+        log.info("word: {} successfully added", value);
         dictionaryDataLoader.addWordToAnagramMap(value);
+        return true;
     }
 
-    public void deleteWord(String value) {
-        Optional<Word> wordToDElete = wordRepository.findByValue(value);
+    public Boolean deleteWord(String value) {
+        List<Word> wordToDElete = wordRepository.findByValue(value);
         if (wordToDElete.isEmpty()) {
             log.error("failed to delete word because word: {} was not found", value);
-            return;
+            return false;
         }
-        wordRepository.delete(wordToDElete.get());
+        wordRepository.deleteAll(wordToDElete);
         //remove from in memery anagram hash map
         dictionaryDataLoader.removeWordFromAnagramMap(value);
-        log.info("word {} was successfully deleted.", wordToDElete.get().getValue());
+        log.info("word {} was successfully deleted.", wordToDElete.get(0).getValue());
+        return true;
     }
 
     public List<WordDto> getAnagramsForWord(String value) {
         return dictionaryDataLoader.getAnagramsForWord(value).stream().map(WordDto::new).toList();
     }
 
-    public Map<Integer,Integer> getLengthToAnagramsStats(){
+    public Map<Integer, Integer> getLengthToAnagramsStats() {
         return dictionaryDataLoader.getLengthToAnagramsStats();
     }
 }

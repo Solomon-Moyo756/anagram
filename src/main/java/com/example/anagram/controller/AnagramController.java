@@ -65,16 +65,16 @@ public class AnagramController {
     }
 
     @PostMapping("/add-word")
-    public void addNewWord(@RequestParam String value) {
+    public ResponseEntity<Boolean> addNewWord(@RequestParam String value) {
         log.info("adding new word: {} to DB", value);
         //TODO: I will authenticate for adding a value
-        anagramService.addWord(value);
+        return ResponseEntity.ok(anagramService.addWord(value));
     }
 
     @DeleteMapping("/delete-word")
-    public void deleteWord(@RequestParam String value) {
+    public ResponseEntity<Boolean> deleteWord(@RequestParam String value) {
         log.info("deleting word: {} from DB", value);
         //TODO: authenticate for deleting a value
-        anagramService.deleteWord(value);
+        return ResponseEntity.ok(anagramService.deleteWord(value));
     }
 }
