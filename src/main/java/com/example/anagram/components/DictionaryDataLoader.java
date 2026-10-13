@@ -25,7 +25,6 @@ public class DictionaryDataLoader {
     private String DICT_PATH = "src/main/resources/dict/Dictionary.txt";
     @Getter
     private HashMap<String, ArrayList<String>> anagramsMap = new HashMap<>();
-    private HashMap<Integer, Integer> statsMap = new HashMap<>();
 
     public DictionaryDataLoader(WordRepository wordRepository) {
         this.wordRepository = wordRepository;
@@ -79,7 +78,6 @@ public class DictionaryDataLoader {
             }
         }
         log.info("hash map for anagrams has been successfully created");
-        generateStats();
     }
 
     public void addWordToAnagramMap(String newWord) {
@@ -93,7 +91,6 @@ public class DictionaryDataLoader {
             listOfWords.add(newWord);
             anagramsMap.put(anagramKey, listOfWords);
         }
-        generateStats(); //update stats
     }
 
     public void removeWordFromAnagramMap(List<Word> wordsToRemove) {
@@ -105,21 +102,15 @@ public class DictionaryDataLoader {
                 log.info("word {} removed from anagrams map", word.getValue());
             }
         }
-        generateStats(); //u[date stats
     }
 
     /**
      * defines how correlation between length of word and number of anagrams
      */
     public HashMap<Integer, Integer> getLengthToAnagramsStats() {
-        if(!statsMap.isEmpty()){return statsMap;}
-        return generateStats();
-    }
-
-    private HashMap<Integer, Integer> generateStats() {
         //looping through key set and check the size, after that add (size of list - 1) of that key,
         log.info("generating stats for all anagrams of all lengths");
-//        HashMap<Integer, Integer> statsMap = new HashMap<>();
+        HashMap<Integer, Integer> statsMap = new HashMap<>();
         for (String key : anagramsMap.keySet()) {
             int keySize = key.length();
             if (statsMap.containsKey(keySize)) {
