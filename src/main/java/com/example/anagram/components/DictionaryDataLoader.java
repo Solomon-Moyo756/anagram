@@ -8,8 +8,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -22,7 +22,6 @@ import java.util.*;
 public class DictionaryDataLoader {
 
     private final WordRepository wordRepository;
-    private String DICT_PATH = "src/main/resources/dict/Dictionary.txt";
     @Getter
     private HashMap<String, ArrayList<String>> anagramsMap = new HashMap<>();
 
@@ -39,21 +38,36 @@ public class DictionaryDataLoader {
         try {
             if (wordRepository.count() == 0) {
                 log.info("seeding database with new data");
-                FileInputStream inputStream = new FileInputStream(DICT_PATH);
-                Scanner scanner = new Scanner(inputStream);
-                List<Word> words = new ArrayList<>();
-                while (scanner.hasNext()) {
-                    Word word = new Word();
-                    String value = normalize(scanner.nextLine());
-                    word.setValue(value);
-                    words.add(word);
+
+                try (InputStream inputStream =
+                             getClass().getResourceAsStream("/dict/Dictionary.txt")) {
+
+                    if (inputStream == null) {
+                        throw new IllegalStateException(
+                                "Dictionary.txt not found on the classpath at /dict/Dictionary.txt");
+                    }
+
+                    try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+                        List<Word> words = new ArrayList<>();
+                        String line;
+
+                        while ((line = reader.readLine()) != null) {
+                            Word word = new Word();
+                            String value = normalize(line);
+                            word.setValue(value);
+                            words.add(word);
+                        }
+
+                        wordRepository.saveAll(words);
+                    }
                 }
-                wordRepository.saveAll(words);
             } else {
                 log.info("skipping seeding...");
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load dictionary", e);
         } finally {
             log.info("initializing anagram hash map");
             initializeAnagramMap();
@@ -146,7 +160,7 @@ public class DictionaryDataLoader {
         return new String(chars);
     }
 
-    public static String normalize(String str){
+    public static String normalize(String str) {
         return str.toUpperCase();
     }
 
