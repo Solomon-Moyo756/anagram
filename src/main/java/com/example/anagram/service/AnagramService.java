@@ -5,6 +5,8 @@ import com.example.anagram.dto.WordDto;
 import com.example.anagram.entity.Word;
 import com.example.anagram.repository.WordRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,10 +32,12 @@ public class AnagramService {
         this.dictionaryDataLoader = dictionaryDataLoader;
     }
 
+    @Cacheable("words")
     public List<WordDto> getAllWords() {
         return wordRepository.findAll().stream().map(word -> new WordDto(word.getValue())).toList();
     }
 
+    @CacheEvict(value = {"words","stats"}, allEntries = true)
     public Boolean addWord(String value) {
         value = normalize(value);
         List<Word> currentWord = wordRepository.findByValue(value);
@@ -50,6 +54,7 @@ public class AnagramService {
         return true;
     }
 
+    @CacheEvict(value = {"words","stats"}, allEntries = true)
     public Boolean deleteWord(String value) {
         value = normalize(value);
         List<Word> wordToDElete = wordRepository.findByValue(value);
@@ -68,6 +73,7 @@ public class AnagramService {
         return dictionaryDataLoader.getAnagramsForWord(value).stream().map(WordDto::new).toList();
     }
 
+    @Cacheable("stats")
     public Map<Integer, Integer> getLengthToAnagramsStats() {
         return dictionaryDataLoader.getLengthToAnagramsStats();
     }
